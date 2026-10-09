@@ -7,73 +7,126 @@
 <title>Vibeコーディング 仕様づくりナビ</title>
 
 <style>
+:root {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #20242c;
+  --sub: #667085;
+  --border: #d8dee8;
+  --primary: #2867d8;
+  --primary-light: #eaf2ff;
+  --success: #177447;
+  --success-light: #e9f7ef;
+  --warning: #9a6100;
+  --warning-light: #fff7e6;
+  --dark: #202632;
+}
+
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--text);
   font-family:
     -apple-system,
     BlinkMacSystemFont,
     "Hiragino Sans",
     "Yu Gothic",
+    "Meiryo",
     sans-serif;
-  background: #f5f7fb;
-  color: #222;
+  line-height: 1.7;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
 }
 
 header {
   background: white;
-  border-bottom: 1px solid #ddd;
-  padding: 20px 30px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  max-width: 1500px;
+  margin: auto;
+  padding: 22px 28px;
 }
 
 header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 25px;
 }
 
 header p {
-  margin: 8px 0 0;
-  color: #666;
+  margin: 6px 0 0;
+  color: var(--sub);
 }
 
 .app {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 24px;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: auto;
   padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 470px;
+  gap: 24px;
 }
 
-.main,
-.side {
-  background: white;
+.panel {
+  background: var(--card);
   border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 5px 24px rgba(30, 40, 60, 0.07);
 }
+
+.main {
+  padding: 28px;
+}
+
+.side {
+  padding: 22px;
+  align-self: start;
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+}
+
+/* -------------------------
+   Step Navigation
+------------------------- */
 
 .step-nav {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   margin-bottom: 30px;
 }
 
 .step-button {
-  flex: 1;
-  border: none;
-  padding: 14px 10px;
+  min-height: 48px;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #edf1f7;
-  cursor: pointer;
-  font-weight: bold;
+  background: #f6f8fb;
+  color: #586174;
+  font-weight: 700;
 }
 
 .step-button.active {
-  background: #0b6de8;
+  background: var(--primary);
+  border-color: var(--primary);
   color: white;
 }
 
@@ -85,33 +138,52 @@ header p {
   display: block;
 }
 
+.step-number {
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 14px;
+}
+
 h2 {
+  margin: 4px 0 6px;
   font-size: 28px;
-  margin-bottom: 8px;
+}
+
+h3 {
+  margin-top: 0;
 }
 
 .description {
-  color: #666;
-  margin-bottom: 28px;
+  color: var(--sub);
+  margin: 0 0 28px;
 }
 
 .field {
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
-.field label {
+.field-title {
   display: block;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
+.field-help {
+  margin: 0 0 10px;
+  color: var(--sub);
+  font-size: 14px;
 }
 
 input[type="text"],
-textarea {
+textarea,
+select {
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid #bbc3ce;
+  border: 1px solid #bfc7d4;
   border-radius: 10px;
+  padding: 13px 14px;
+  background: white;
+  font-size: 16px;
 }
 
 textarea {
@@ -119,93 +191,302 @@ textarea {
   resize: vertical;
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid rgba(40, 103, 216, 0.13);
+  border-color: var(--primary);
+}
+
+/* -------------------------
+   Thinking hints
+------------------------- */
+
+.think-box {
+  background: #f7f9fc;
+  border: 1px solid #e0e5ee;
+  border-radius: 13px;
+  padding: 15px;
+  margin-top: 12px;
+}
+
+.hint-button {
+  border: 1px solid #b7c4d8;
+  background: white;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: #445069;
+  font-weight: 600;
+}
+
+.hints {
+  display: none;
+  margin-top: 13px;
+}
+
+.hints.open {
+  display: block;
+}
+
+/* -------------------------
+   Choices
+------------------------- */
+
 .choices {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 9px;
 }
 
 .choice {
-  border: 1px solid #bbc3ce;
-  border-radius: 999px;
+  border: 1px solid #bac4d2;
   background: white;
-  padding: 11px 16px;
-  cursor: pointer;
-  transition: 0.15s;
+  color: #404a5d;
+  border-radius: 999px;
+  padding: 10px 15px;
+  min-height: 44px;
 }
 
 .choice:hover {
-  background: #eef6ff;
+  background: #f3f7fd;
 }
 
 .choice.selected {
-  background: #e6f1ff;
-  color: #075fc7;
-  border-color: #0b6de8;
+  border-color: var(--primary);
+  color: #1755b3;
+  background: var(--primary-light);
   font-weight: bold;
 }
 
-.next-area {
-  margin-top: 30px;
+/* -------------------------
+   Cards
+------------------------- */
+
+.box {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 17px;
+  margin-bottom: 16px;
+  background: #fafbfd;
+}
+
+.box-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.feature-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  background: #fafbfd;
+}
+
+.feature-number {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 170px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* -------------------------
+   IPO
+------------------------- */
+
+.ipo-grid {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr 40px 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.ipo-card {
+  background: #fafbfd;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+}
+
+.arrow {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  color: var(--sub);
+  font-size: 27px;
 }
 
-.next-button {
+/* -------------------------
+   Common conditions
+------------------------- */
+
+.common-box {
+  background: var(--warning-light);
+  border: 1px solid #ead09b;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.common-box ul {
+  margin: 8px 0 0;
+  padding-left: 22px;
+}
+
+/* -------------------------
+   Buttons
+------------------------- */
+
+.nav-actions {
+  margin-top: 35px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn {
   border: none;
-  background: #0b6de8;
-  color: white;
-  padding: 13px 24px;
   border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
+  min-height: 46px;
+  padding: 11px 20px;
+  font-weight: 700;
 }
 
-.side {
-  position: sticky;
-  top: 24px;
-  height: fit-content;
+.btn-primary {
+  background: var(--primary);
+  color: white;
 }
 
-.side h3 {
-  margin-top: 0;
+.btn-secondary {
+  background: #edf1f6;
+  color: #4b5565;
+}
+
+.btn-copy {
+  width: 100%;
+  margin-top: 12px;
+  background: var(--success-light);
+  color: var(--success);
+}
+
+/* -------------------------
+   Side
+------------------------- */
+
+.side-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #edf1f6;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.side-tab {
+  border: none;
+  padding: 9px;
+  border-radius: 8px;
+  background: transparent;
+  font-weight: bold;
+  color: #626b7b;
+}
+
+.side-tab.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 1px 5px rgba(0,0,0,.08);
+}
+
+.side-content {
+  display: none;
+}
+
+.side-content.active {
+  display: block;
+}
+
+.spec-section {
+  border-bottom: 1px solid #e6eaf0;
+  padding: 11px 0;
+  font-size: 14px;
+}
+
+.spec-title {
+  font-weight: bold;
+  color: #42516a;
+  margin-bottom: 3px;
+}
+
+.empty {
+  color: #9aa2af;
 }
 
 .prompt {
-  background: #1e2430;
-  color: #eef2f8;
-  border-radius: 14px;
-  padding: 20px;
   white-space: pre-wrap;
-  line-height: 1.8;
-  min-height: 350px;
-}
-
-.copy-button {
-  margin-top: 16px;
-  width: 100%;
-  border: none;
-  background: #e8f8ee;
-  color: #14733b;
-  font-weight: bold;
-  padding: 15px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.note {
-  margin-top: 14px;
+  background: var(--dark);
+  color: #eef2f7;
+  border-radius: 13px;
+  padding: 18px;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
   font-size: 13px;
-  color: #777;
+  line-height: 1.75;
 }
 
-@media (max-width: 900px) {
+/* -------------------------
+   Responsive
+------------------------- */
+
+@media (max-width: 1050px) {
   .app {
     grid-template-columns: 1fr;
   }
 
   .side {
     position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 12px;
+  }
+
+  .main,
+  .side {
+    padding: 18px;
+    border-radius: 13px;
+  }
+
+  .step-nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ipo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  h2 {
+    font-size: 23px;
   }
 }
 </style>
@@ -214,195 +495,1016 @@ textarea {
 <body>
 
 <header>
-  <h1>Vibeコーディング 仕様づくりナビ2</h1>
-  <p>考えたことを選んでいくと、AIに渡す仕様ができあがります。</p>
+  <div class="header-inner">
+    <h1>Vibeコーディング 仕様づくりナビ</h1>
+    <p>
+      「誰の、何を、どうしたい？」から、
+      アプリの設計を考えてAIに伝えよう。
+    </p>
+  </div>
 </header>
 
 <div class="app">
 
-<main class="main">
+<main class="panel main">
 
-  <div class="step-nav">
-    <button class="step-button active" data-step="1">1 アイデア</button>
-    <button class="step-button" data-step="2">2 使う場面</button>
-    <button class="step-button" data-step="3">3 仕様</button>
-  </div>
+<nav class="step-nav">
+  <button class="step-button active" data-step="1">1 問題</button>
+  <button class="step-button" data-step="2">2 場面</button>
+  <button class="step-button" data-step="3">3 機能</button>
+  <button class="step-button" data-step="4">4 しくみ</button>
+  <button class="step-button" data-step="5">5 データ</button>
+  <button class="step-button" data-step="6">6 使いやすさ</button>
+  <button class="step-button" data-step="7">7 完成条件</button>
+  <button class="step-button" data-step="8">8 確認</button>
+</nav>
 
-  <!-- STEP 1 -->
-  <section class="step active" id="step1">
 
-    <h2>何を、誰のために作りますか？</h2>
-    <p class="description">
-      まず、解決したい問題と作りたいものを整理します。
-    </p>
+<!-- ==================================================
+ STEP 1
+================================================== -->
 
-    <div class="field">
-      <label>作るものの名前</label>
-      <input
-        type="text"
-        id="appName"
-        placeholder="例：5問チャレンジ"
-      >
-    </div>
+<section class="step active" id="step1">
 
-    <div class="field">
-      <label>誰のために作りますか？</label>
+<div class="step-number">STEP 1</div>
 
-      <div class="choices" data-target="user">
-        <button class="choice">自分</button>
-        <button class="choice">中学生</button>
-        <button class="choice">小学生</button>
-        <button class="choice">先生</button>
-        <button class="choice">家族</button>
-        <button class="choice">地域の人</button>
-      </div>
-    </div>
+<h2>誰の、何を、どうしたい？</h2>
 
-    <div class="field">
-      <label>どんなことを良くしたいですか？</label>
+<p class="description">
+まず、アプリの機能ではなく、
+解決したい問題から考えてみよう。
+</p>
 
-      <div class="choices" data-target="problem">
-        <button class="choice">分かりやすくしたい</button>
-        <button class="choice">間違いを減らしたい</button>
-        <button class="choice">時間を短くしたい</button>
-        <button class="choice">忘れないようにしたい</button>
-        <button class="choice">楽しくしたい</button>
-        <button class="choice">情報を整理したい</button>
-      </div>
-    </div>
 
-    <div class="field">
-      <label>どんなものを作りたいですか？</label>
-      <textarea
-        id="idea"
-        placeholder="例：授業で学習した内容を5問のクイズで確認し、間違えた問題を復習できるアプリ"
-      ></textarea>
-    </div>
+<div class="field">
 
-    <div class="next-area">
-      <button class="next-button" onclick="showStep(2)">
-        次へ
-      </button>
-    </div>
+<label class="field-title">
+誰のために作りますか？
+</label>
 
-  </section>
+<input
+  id="targetUser"
+  type="text"
+  placeholder="例：買い物をする家族">
 
-  <!-- STEP 2 -->
-  <section class="step" id="step2">
+<div class="think-box">
 
-    <h2>どんな場面で使いますか？</h2>
-    <p class="description">
-      利用する場面や機器を決めます。
-    </p>
+<button
+  class="hint-button"
+  onclick="toggleHint('userHints')">
+考えるヒントを見る
+</button>
 
-    <div class="field">
-      <label>使う場面</label>
+<div class="hints" id="userHints">
 
-      <div class="choices" data-target="scene">
-        <button class="choice">授業中</button>
-        <button class="choice">授業後</button>
-        <button class="choice">家庭学習</button>
-        <button class="choice">休み時間</button>
-        <button class="choice">学校行事</button>
-        <button class="choice">地域</button>
-      </div>
-    </div>
+<div class="choices hint-fill"
+     data-fill="targetUser">
 
-    <div class="field">
-      <label>使う機器</label>
+<button class="choice">自分</button>
+<button class="choice">同じ学校の生徒</button>
+<button class="choice">小学生</button>
+<button class="choice">先生</button>
+<button class="choice">家族</button>
+<button class="choice">学校に来る人</button>
+<button class="choice">地域の人</button>
 
-      <div class="choices" data-target="device">
-        <button class="choice">Chromebook</button>
-        <button class="choice">パソコン</button>
-        <button class="choice">タブレット</button>
-        <button class="choice">スマートフォン</button>
-      </div>
-    </div>
+</div>
 
-    <div class="next-area">
-      <button class="next-button" onclick="showStep(3)">
-        次へ
-      </button>
-    </div>
+</div>
+</div>
+</div>
 
-  </section>
 
-  <!-- STEP 3 -->
-  <section class="step" id="step3">
+<div class="field">
 
-    <h2>必要な仕様を決めましょう</h2>
+<label class="field-title">
+その人は、どんなことで困っていますか？
+</label>
 
-    <p class="description">
-      作るものに必要な機能を選びます。
-    </p>
+<textarea
+  id="problem"
+  placeholder="例：買い物に行ったときに、必要な物を忘れてしまう"></textarea>
 
-    <div class="field">
-      <label>入力方法</label>
+</div>
 
-      <div class="choices multi" data-target="input">
-        <button class="choice">ボタン</button>
-        <button class="choice">文字入力</button>
-        <button class="choice">数字入力</button>
-        <button class="choice">選択肢</button>
-        <button class="choice">画像</button>
-      </div>
-    </div>
 
-    <div class="field">
-      <label>コンピュータにしてほしいこと</label>
+<div class="field">
 
-      <div class="choices multi" data-target="process">
-        <button class="choice">比較する</button>
-        <button class="choice">計算する</button>
-        <button class="choice">検索する</button>
-        <button class="choice">判定する</button>
-        <button class="choice">記録する</button>
-        <button class="choice">ランダムに選ぶ</button>
-      </div>
-    </div>
+<label class="field-title">
+どうなったら、問題が良くなったと言えそうですか？
+</label>
 
-    <div class="field">
-      <label>結果をどう伝えますか？</label>
+<textarea
+  id="goal"
+  placeholder="例：必要な物を忘れずに買えるようにしたい"></textarea>
 
-      <div class="choices multi" data-target="output">
-        <button class="choice">文字を表示</button>
-        <button class="choice">画像を表示</button>
-        <button class="choice">正誤を表示</button>
-        <button class="choice">得点を表示</button>
-        <button class="choice">解説を表示</button>
-      </div>
-    </div>
+</div>
 
-    <div class="field">
-      <label>使いやすさの条件</label>
 
-      <div class="choices multi" data-target="condition">
-        <button class="choice">大きなボタン</button>
-        <button class="choice">読みやすい文字</button>
-        <button class="choice">操作を少なくする</button>
-        <button class="choice">やり直せる</button>
-        <button class="choice">データを保存しない</button>
-      </div>
-    </div>
+<div class="field">
 
-  </section>
+<label class="field-title">
+作るアプリの名前
+</label>
+
+<input
+  id="appName"
+  type="text"
+  placeholder="例：買い物ナビ">
+
+<p class="field-help">
+まだ決まっていなければ空欄でも大丈夫です。
+</p>
+
+</div>
+
+
+<div class="nav-actions">
+
+<span></span>
+
+<button class="btn btn-primary"
+        onclick="showStep(2)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 2
+================================================== -->
+
+<section class="step" id="step2">
+
+<div class="step-number">STEP 2</div>
+
+<h2>いつ、どこで使う？</h2>
+
+<p class="description">
+アプリが使われる場面をイメージしよう。
+</p>
+
+
+<div class="field">
+
+<label class="field-title">
+どんなときに使いますか？
+</label>
+
+<textarea
+  id="scene"
+  placeholder="例：買い物に出かける前と、お店の中"></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+どんな機器で使いますか？
+</label>
+
+<div class="choices single-choice"
+     data-name="device">
+
+<button class="choice">Chromebook</button>
+<button class="choice">パソコン</button>
+<button class="choice">タブレット</button>
+<button class="choice">スマートフォン</button>
+<button class="choice">まだ決めない</button>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+どのくらいの時間で使えるとよいですか？
+</label>
+
+<input
+  id="useTime"
+  type="text"
+  placeholder="例：1〜2分程度">
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+なぜ、その場面で使いたいのですか？
+</label>
+
+<textarea
+  id="sceneReason"
+  placeholder="例：買い物を始める前に、すぐ確認できるようにしたいから"></textarea>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(1)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(3)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 3
+================================================== -->
+
+<section class="step" id="step3">
+
+<div class="step-number">STEP 3</div>
+
+<h2>何ができるアプリにする？</h2>
+
+<p class="description">
+まず必要な機能を考え、
+その機能がどのように動くのかまで具体的にしてみよう。
+</p>
+
+
+<div class="feature-card">
+
+<div class="feature-number">機能 1</div>
+
+<div class="feature-grid">
+
+<input
+  id="feature1"
+  type="text"
+  placeholder="例：買い物リストを作る">
+
+<select id="priority1">
+<option>絶対必要</option>
+<option>できれば欲しい</option>
+<option>今回は入れない</option>
+</select>
+
+</div>
+
+<textarea
+  id="featureDetail1"
+  placeholder="この機能は、どのように動けばよいですか？
+例：品物を追加できる。個数を入力できる。いらなくなった項目は削除できる。"></textarea>
+
+</div>
+
+
+<div class="feature-card">
+
+<div class="feature-number">機能 2</div>
+
+<div class="feature-grid">
+
+<input
+  id="feature2"
+  type="text"
+  placeholder="必要な機能">
+
+<select id="priority2">
+<option>絶対必要</option>
+<option>できれば欲しい</option>
+<option>今回は入れない</option>
+</select>
+
+</div>
+
+<textarea
+  id="featureDetail2"
+  placeholder="この機能の詳しい動き"></textarea>
+
+</div>
+
+
+<div class="feature-card">
+
+<div class="feature-number">機能 3</div>
+
+<div class="feature-grid">
+
+<input
+  id="feature3"
+  type="text"
+  placeholder="必要な機能">
+
+<select id="priority3">
+<option>絶対必要</option>
+<option>できれば欲しい</option>
+<option>今回は入れない</option>
+</select>
+
+</div>
+
+<textarea
+  id="featureDetail3"
+  placeholder="この機能の詳しい動き"></textarea>
+
+</div>
+
+
+<div class="think-box">
+
+<button
+  class="hint-button"
+  onclick="toggleHint('featureHints')">
+機能を考えるヒント
+</button>
+
+<div class="hints" id="featureHints">
+
+<p class="field-help">
+例えば、こんな働きがあります。
+</p>
+
+<div class="choices">
+<button class="choice">追加する</button>
+<button class="choice">削除する</button>
+<button class="choice">変更する</button>
+<button class="choice">検索する</button>
+<button class="choice">並べ替える</button>
+<button class="choice">比べる</button>
+<button class="choice">計算する</button>
+<button class="choice">判定する</button>
+<button class="choice">記録する</button>
+<button class="choice">一覧で見る</button>
+</div>
+
+</div>
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+一番大切な機能はどれですか？ なぜですか？
+</label>
+
+<textarea
+  id="featureReason"
+  placeholder="例：買う物を忘れないことが一番の目的なので、リストを作れることが最も大切"></textarea>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(2)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(4)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 4
+================================================== -->
+
+<section class="step" id="step4">
+
+<div class="step-number">STEP 4</div>
+
+<h2>どんなしくみで動く？</h2>
+
+<p class="description">
+「入力 → 処理 → 出力」で、
+コンピュータの働きを考えてみよう。
+</p>
+
+
+<div class="ipo-grid">
+
+<div class="ipo-card">
+
+<h3>① 入力</h3>
+
+<p class="field-help">
+利用する人は何を入力したり選んだりしますか？
+</p>
+
+<textarea
+  id="inputData"
+  placeholder="例：品物の名前、個数"></textarea>
+
+<div class="think-box">
+
+<button
+  class="hint-button"
+  onclick="toggleHint('inputHints')">
+ヒント
+</button>
+
+<div class="hints" id="inputHints">
+
+<div class="choices">
+<button class="choice">文字</button>
+<button class="choice">数字</button>
+<button class="choice">ボタン</button>
+<button class="choice">選択肢</button>
+<button class="choice">画像</button>
+<button class="choice">センサ</button>
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<div class="arrow">→</div>
+
+
+<div class="ipo-card">
+
+<h3>② 処理</h3>
+
+<p class="field-help">
+入力された情報を使って、
+コンピュータは何をしますか？
+</p>
+
+<textarea
+  id="process"
+  placeholder="例：入力された品物を買い物リストに追加する"></textarea>
+
+<div class="think-box">
+
+<button
+  class="hint-button"
+  onclick="toggleHint('processHints')">
+ヒント
+</button>
+
+<div class="hints" id="processHints">
+
+<div class="choices">
+<button class="choice">比べる</button>
+<button class="choice">計算する</button>
+<button class="choice">判定する</button>
+<button class="choice">記録する</button>
+<button class="choice">探す</button>
+<button class="choice">並べ替える</button>
+<button class="choice">数える</button>
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<div class="arrow">→</div>
+
+
+<div class="ipo-card">
+
+<h3>③ 出力</h3>
+
+<p class="field-help">
+結果として何を表示したり、動かしたりしますか？
+</p>
+
+<textarea
+  id="output"
+  placeholder="例：買い物リストを一覧で表示する"></textarea>
+
+<div class="think-box">
+
+<button
+  class="hint-button"
+  onclick="toggleHint('outputHints')">
+ヒント
+</button>
+
+<div class="hints" id="outputHints">
+
+<div class="choices">
+<button class="choice">文字</button>
+<button class="choice">一覧</button>
+<button class="choice">画像</button>
+<button class="choice">グラフ</button>
+<button class="choice">音</button>
+<button class="choice">LED</button>
+<button class="choice">モーター</button>
+</div>
+
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="field" style="margin-top:30px;">
+
+<label class="field-title">
+「もし○○なら」のように、動きを変える必要がありますか？
+</label>
+
+<input
+  id="conditionIf"
+  type="text"
+  placeholder="もし：例　在庫が0個だったら">
+
+<input
+  id="conditionThen"
+  type="text"
+  style="margin-top:8px;"
+  placeholder="そのとき：例　買い物リストに表示する">
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(3)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(5)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 5
+================================================== -->
+
+<section class="step" id="step5">
+
+<div class="step-number">STEP 5</div>
+
+<h2>データをどうする？</h2>
+
+<p class="description">
+アプリで扱う情報を、
+残しておく必要があるか考えてみよう。
+</p>
+
+
+<div class="field">
+
+<label class="field-title">
+アプリを閉じたあとも、データを残しておく必要がありますか？
+</label>
+
+<div class="choices single-choice"
+     data-name="saveNeed">
+
+<button class="choice">保存しない</button>
+<button class="choice">保存したい</button>
+<button class="choice">まだ分からない</button>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+保存するとしたら、何を保存したいですか？
+</label>
+
+<textarea
+  id="savedData"
+  placeholder="例：品物、個数、家に残っている数"></textarea>
+
+<p class="field-help">
+個人情報はできるだけ保存しないようにします。
+</p>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+どのように保存したいですか？
+</label>
+
+<div class="choices single-choice"
+     data-name="saveMethod">
+
+<button class="choice">保存しない</button>
+<button class="choice">同じ端末のブラウザに保存</button>
+<button class="choice">CSVなどのファイルに保存</button>
+<button class="choice">先生と相談して決める</button>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+保存したデータを、どのように見たいですか？
+</label>
+
+<textarea
+  id="dataDisplay"
+  placeholder="例：保存されている買い物リストを一覧で表示したい"></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+保存したデータを削除する機能は必要ですか？
+</label>
+
+<div class="choices single-choice"
+     data-name="deleteData">
+
+<button class="choice">必要</button>
+<button class="choice">不要</button>
+<button class="choice">まだ分からない</button>
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+データをファイルとして取り出す必要がありますか？
+</label>
+
+<div class="choices single-choice"
+     data-name="exportData">
+
+<button class="choice">必要ない</button>
+<button class="choice">CSVで取り出したい</button>
+<button class="choice">まだ分からない</button>
+
+</div>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(4)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(6)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 6
+================================================== -->
+
+<section class="step" id="step6">
+
+<div class="step-number">STEP 6</div>
+
+<h2>使いやすさを考えよう</h2>
+
+<p class="description">
+機能だけでなく、使う人が迷わず操作できるかも大切です。
+</p>
+
+
+<div class="field">
+
+<label class="field-title">
+使いやすくするために、どんな工夫をしますか？
+</label>
+
+<textarea
+  id="usability"
+  placeholder="例：入力欄を少なくして、追加ボタンを大きくする"></textarea>
+
+<div class="think-box">
+
+<button
+  class="hint-button"
+  onclick="toggleHint('uiHints')">
+考えるヒントを見る
+</button>
+
+<div class="hints" id="uiHints">
+
+<div class="choices">
+<button class="choice">大きなボタン</button>
+<button class="choice">読みやすい文字</button>
+<button class="choice">操作を少なくする</button>
+<button class="choice">戻るボタン</button>
+<button class="choice">短い説明</button>
+<button class="choice">色だけに頼らない</button>
+<button class="choice">入力を少なくする</button>
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+ほかに守りたい条件はありますか？
+</label>
+
+<textarea
+  id="otherConditions"
+  placeholder="例：買い物中に片手でも操作しやすくする"></textarea>
+
+</div>
+
+
+<div class="common-box">
+
+<strong>
+教材から自動的に追加される共通条件
+</strong>
+
+<ul>
+<li>個人情報を必要以上に扱わない</li>
+<li>Chromebookや一般的なPCで利用できる</li>
+<li>タブレットでも操作できる</li>
+<li>スマートフォンでも確認できる</li>
+<li>文字を読みやすくする</li>
+<li>ボタンを押しやすくする</li>
+<li>タッチ操作だけでも利用できる</li>
+<li>ホバーだけに依存した操作を使わない</li>
+<li>色だけで意味を伝えない</li>
+<li>初心者でも修正しやすいコードにする</li>
+<li>コードには分かりやすいコメントを付ける</li>
+</ul>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(5)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(7)">
+次へ →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 7
+================================================== -->
+
+<section class="step" id="step7">
+
+<div class="step-number">STEP 7</div>
+
+<h2>何ができたら完成？</h2>
+
+<p class="description">
+「動いたから完成」ではなく、
+最初に考えたことができているか確認できるようにしよう。
+</p>
+
+
+<div class="field">
+
+<label class="field-title">
+完成したと言える条件
+</label>
+
+<input
+  class="completion"
+  type="text"
+  placeholder="例：品物をリストに追加できる">
+
+<input
+  class="completion"
+  type="text"
+  style="margin-top:8px;"
+  placeholder="例：個数を入力できる">
+
+<input
+  class="completion"
+  type="text"
+  style="margin-top:8px;"
+  placeholder="例：不要な品物を削除できる">
+
+<input
+  class="completion"
+  type="text"
+  style="margin-top:8px;"
+  placeholder="完成条件 4">
+
+<input
+  class="completion"
+  type="text"
+  style="margin-top:8px;"
+  placeholder="完成条件 5">
+
+</div>
+
+
+<div class="field">
+
+<label class="field-title">
+最初に考えた問題は、このアプリでどう良くなりそうですか？
+</label>
+
+<textarea
+  id="evaluation"
+  placeholder="例：買う物を事前に整理して確認できるため、買い忘れが減りそう"></textarea>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(6)">
+← 戻る
+</button>
+
+<button class="btn btn-primary"
+        onclick="showStep(8)">
+仕様を確認する →
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ==================================================
+ STEP 8
+================================================== -->
+
+<section class="step" id="step8">
+
+<div class="step-number">STEP 8</div>
+
+<h2>自分が考えた仕様を確認しよう</h2>
+
+<p class="description">
+右側の「現在の仕様」を読み返し、
+本当に自分が作りたいものになっているか確認してください。
+</p>
+
+
+<div class="common-box">
+
+<strong>確認してみよう</strong>
+
+<ul>
+<li>誰のためのアプリか分かる</li>
+<li>何を良くしたいのか分かる</li>
+<li>必要な機能が分かる</li>
+<li>それぞれの機能の動きが分かる</li>
+<li>入力・処理・出力が分かる</li>
+<li>保存するデータが分かる</li>
+<li>完成したかどうか確かめられる</li>
+</ul>
+
+</div>
+
+
+<div class="field" style="margin-top:25px;">
+
+<label class="field-title">
+この設計で一番大切にしたことは何ですか？
+</label>
+
+<textarea
+  id="mostImportant"
+  placeholder="例：買い物中でも短時間で簡単に操作できること"></textarea>
+
+</div>
+
+
+<div class="nav-actions">
+
+<button class="btn btn-secondary"
+        onclick="showStep(7)">
+← 戻って直す
+</button>
+
+<button class="btn btn-primary"
+        onclick="openPromptTab()">
+AI用プロンプトを見る
+</button>
+
+</div>
+
+</section>
+
 
 </main>
 
 
-<aside class="side">
 
-  <h3>現在の仕様・AIへのプロンプト</h3>
+<!-- ==================================================
+ SIDE PANEL
+================================================== -->
 
-  <div class="prompt" id="prompt"></div>
+<aside class="panel side">
 
-  <button class="copy-button" onclick="copyPrompt()">
-    プロンプトをコピー
-  </button>
+<div class="side-tabs">
 
-  <div class="note">
-    コピーした文章をVibeコーディング用AIに貼り付けてください。
-  </div>
+<button
+  id="specTab"
+  class="side-tab active"
+  onclick="showSideTab('spec')">
+現在の仕様
+</button>
+
+<button
+  id="promptTab"
+  class="side-tab"
+  onclick="showSideTab('prompt')">
+AI用プロンプト
+</button>
+
+</div>
+
+
+<div
+  id="specContent"
+  class="side-content active">
+
+<div id="specPreview"></div>
+
+</div>
+
+
+<div
+  id="promptContent"
+  class="side-content">
+
+<div
+  id="prompt"
+  class="prompt"></div>
+
+<button
+  class="btn btn-copy"
+  onclick="copyPrompt()">
+プロンプトをコピー
+</button>
+
+</div>
 
 </aside>
 
@@ -411,82 +1513,97 @@ textarea {
 
 <script>
 
+/* ==================================================
+ 選択状態
+================================================== */
+
 const state = {
-  user: "",
-  problem: "",
-  scene: "",
   device: "",
-  input: [],
-  process: [],
-  output: [],
-  condition: []
+  saveNeed: "",
+  saveMethod: "",
+  deleteData: "",
+  exportData: ""
 };
 
 
-// 選択ボタン
-document.querySelectorAll(".choices").forEach(group => {
+/* ==================================================
+ 基本処理
+================================================== */
 
-  group.addEventListener("click", e => {
-
-    if (!e.target.classList.contains("choice")) return;
-
-    const target = group.dataset.target;
-    const multi = group.classList.contains("multi");
-
-    if (multi) {
-
-      e.target.classList.toggle("selected");
-
-      state[target] =
-        [...group.querySelectorAll(".choice.selected")]
-        .map(el => el.textContent);
-
-    } else {
-
-      group.querySelectorAll(".choice")
-        .forEach(el => el.classList.remove("selected"));
-
-      e.target.classList.add("selected");
-
-      state[target] = e.target.textContent;
-
-    }
-
-    updatePrompt();
-
-  });
-
-});
+function value(id) {
+  return document.getElementById(id).value.trim();
+}
 
 
-// 文字入力
-["appName", "idea"].forEach(id => {
+function escapeHTML(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  document.getElementById(id)
-    .addEventListener("input", updatePrompt);
 
-});
+function undecided(text) {
+  return text || "まだ決めていません";
+}
 
+
+function previewText(text) {
+  return text
+    ? escapeHTML(text)
+    : '<span class="empty">まだ決めていません</span>';
+}
+
+
+/* ==================================================
+ Hint
+================================================== */
+
+function toggleHint(id) {
+  document
+    .getElementById(id)
+    .classList
+    .toggle("open");
+}
+
+
+/* ==================================================
+ Step
+================================================== */
 
 function showStep(number) {
 
   document.querySelectorAll(".step")
-    .forEach(el => el.classList.remove("active"));
+    .forEach(step =>
+      step.classList.remove("active"));
 
   document.querySelectorAll(".step-button")
-    .forEach(el => el.classList.remove("active"));
+    .forEach(button =>
+      button.classList.remove("active"));
 
-  document.getElementById("step" + number)
+  document
+    .getElementById("step" + number)
     .classList.add("active");
 
-  document.querySelector(
+  const button = document.querySelector(
     `.step-button[data-step="${number}"]`
-  ).classList.add("active");
+  );
 
+  if (button) {
+    button.classList.add("active");
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 
-document.querySelectorAll(".step-button").forEach(button => {
+document.querySelectorAll(".step-button")
+.forEach(button => {
 
   button.addEventListener("click", () => {
     showStep(button.dataset.step);
@@ -495,93 +1612,831 @@ document.querySelectorAll(".step-button").forEach(button => {
 });
 
 
-function list(items) {
+/* ==================================================
+ 選択ボタン
+================================================== */
 
-  if (!items || items.length === 0) {
-    return "まだ決めていません";
+document.querySelectorAll(".single-choice")
+.forEach(group => {
+
+  group.addEventListener("click", event => {
+
+    const button =
+      event.target.closest(".choice");
+
+    if (!button) return;
+
+    group.querySelectorAll(".choice")
+      .forEach(item =>
+        item.classList.remove("selected"));
+
+    button.classList.add("selected");
+
+    state[group.dataset.name] =
+      button.textContent.trim();
+
+    updateAll();
+  });
+
+});
+
+
+/* ==================================================
+ ヒント → 自由記述補助
+================================================== */
+
+document.querySelectorAll(".hint-fill")
+.forEach(group => {
+
+  group.addEventListener("click", event => {
+
+    const button =
+      event.target.closest(".choice");
+
+    if (!button) return;
+
+    const target =
+      document.getElementById(
+        group.dataset.fill
+      );
+
+    if (!target.value.trim()) {
+      target.value =
+        button.textContent.trim();
+    }
+
+    updateAll();
+  });
+
+});
+
+
+/* ==================================================
+ 全入力監視
+================================================== */
+
+document.querySelectorAll(
+  "input, textarea, select"
+).forEach(element => {
+
+  element.addEventListener(
+    "input",
+    updateAll
+  );
+
+  element.addEventListener(
+    "change",
+    updateAll
+  );
+
+});
+
+
+/* ==================================================
+ 機能
+================================================== */
+
+function getFeatures() {
+
+  const result = [];
+
+  for (let i = 1; i <= 3; i++) {
+
+    const name =
+      value("feature" + i);
+
+    const detail =
+      value("featureDetail" + i);
+
+    const priority =
+      document
+        .getElementById("priority" + i)
+        .value;
+
+    if (name) {
+      result.push({
+        name,
+        detail,
+        priority
+      });
+    }
+
   }
 
-  return items.join("、");
+  return result;
+}
+
+
+/* ==================================================
+ 完成条件
+================================================== */
+
+function getCompletion() {
+
+  return [
+    ...document.querySelectorAll(
+      ".completion"
+    )
+  ]
+  .map(input =>
+    input.value.trim())
+  .filter(Boolean);
+}
+
+
+/* ==================================================
+ Side Tab
+================================================== */
+
+function showSideTab(tab) {
+
+  document.querySelectorAll(".side-tab")
+    .forEach(button =>
+      button.classList.remove("active"));
+
+  document.querySelectorAll(".side-content")
+    .forEach(content =>
+      content.classList.remove("active"));
+
+  if (tab === "spec") {
+
+    document
+      .getElementById("specTab")
+      .classList.add("active");
+
+    document
+      .getElementById("specContent")
+      .classList.add("active");
+
+  } else {
+
+    document
+      .getElementById("promptTab")
+      .classList.add("active");
+
+    document
+      .getElementById("promptContent")
+      .classList.add("active");
+
+  }
 
 }
 
+
+function openPromptTab() {
+  showSideTab("prompt");
+}
+
+
+/* ==================================================
+ 仕様プレビュー
+================================================== */
+
+function specBlock(title, content) {
+
+  return `
+    <div class="spec-section">
+      <div class="spec-title">
+        ${escapeHTML(title)}
+      </div>
+      <div>${content}</div>
+    </div>
+  `;
+}
+
+
+function updateSpec() {
+
+  const features =
+    getFeatures();
+
+  const completion =
+    getCompletion();
+
+
+  let featuresHTML = "";
+
+  if (features.length) {
+
+    features.forEach(feature => {
+
+      featuresHTML += `
+        <div style="margin-bottom:8px">
+          <strong>
+            ${escapeHTML(feature.name)}
+          </strong>
+          <br>
+          <small>
+            ${escapeHTML(feature.priority)}
+          </small>
+          ${
+            feature.detail
+            ? `<br>${escapeHTML(feature.detail)}`
+            : ""
+          }
+        </div>
+      `;
+
+    });
+
+  } else {
+
+    featuresHTML =
+      '<span class="empty">まだ決めていません</span>';
+
+  }
+
+
+  let completionHTML = "";
+
+  if (completion.length) {
+
+    completionHTML =
+      completion
+        .map(item =>
+          `<div>□ ${escapeHTML(item)}</div>`)
+        .join("");
+
+  } else {
+
+    completionHTML =
+      '<span class="empty">まだ決めていません</span>';
+
+  }
+
+
+  const condition =
+
+    value("conditionIf") &&
+    value("conditionThen")
+
+    ? `もし「${escapeHTML(value("conditionIf"))}」なら、
+       「${escapeHTML(value("conditionThen"))}」`
+
+    : "";
+
+
+  const html =
+
+    specBlock(
+      "アプリ名",
+      previewText(value("appName"))
+    )
+
+    +
+
+    specBlock(
+      "誰のため？",
+      previewText(value("targetUser"))
+    )
+
+    +
+
+    specBlock(
+      "困っていること",
+      previewText(value("problem"))
+    )
+
+    +
+
+    specBlock(
+      "どうなってほしい？",
+      previewText(value("goal"))
+    )
+
+    +
+
+    specBlock(
+      "使う場面",
+      previewText(value("scene"))
+    )
+
+    +
+
+    specBlock(
+      "使用する機器",
+      previewText(state.device)
+    )
+
+    +
+
+    specBlock(
+      "使用時間",
+      previewText(value("useTime"))
+    )
+
+    +
+
+    `
+    <div class="spec-section">
+      <div class="spec-title">
+        必要な機能
+      </div>
+      ${featuresHTML}
+    </div>
+    `
+
+    +
+
+    specBlock(
+      "入力",
+      previewText(value("inputData"))
+    )
+
+    +
+
+    specBlock(
+      "処理",
+      previewText(value("process"))
+    )
+
+    +
+
+    specBlock(
+      "出力",
+      previewText(value("output"))
+    )
+
+    +
+
+    specBlock(
+      "条件による動き",
+      previewText(condition)
+    )
+
+    +
+
+    specBlock(
+      "保存する必要",
+      previewText(state.saveNeed)
+    )
+
+    +
+
+    specBlock(
+      "保存したいデータ",
+      previewText(value("savedData"))
+    )
+
+    +
+
+    specBlock(
+      "保存方法",
+      previewText(state.saveMethod)
+    )
+
+    +
+
+    specBlock(
+      "保存データの表示",
+      previewText(value("dataDisplay"))
+    )
+
+    +
+
+    specBlock(
+      "データ削除",
+      previewText(state.deleteData)
+    )
+
+    +
+
+    specBlock(
+      "データの出力",
+      previewText(state.exportData)
+    )
+
+    +
+
+    specBlock(
+      "使いやすさ",
+      previewText(value("usability"))
+    )
+
+    +
+
+    specBlock(
+      "その他の条件",
+      previewText(value("otherConditions"))
+    )
+
+    +
+
+    `
+    <div class="spec-section">
+      <div class="spec-title">
+        完成条件
+      </div>
+      ${completionHTML}
+    </div>
+    `;
+
+
+  document
+    .getElementById("specPreview")
+    .innerHTML = html;
+}
+
+
+/* ==================================================
+ AIプロンプト生成
+================================================== */
 
 function updatePrompt() {
 
-  const appName =
-    document.getElementById("appName").value ||
-    "名前未定のWebアプリ";
-
-  const idea =
-    document.getElementById("idea").value ||
-    "まだ詳しく決めていません";
+  const features =
+    getFeatures()
+      .filter(feature =>
+        feature.priority !==
+        "今回は入れない");
 
 
-  const prompt = `あなたはWebアプリ開発を支援するAIです。
+  const required =
+    features.filter(feature =>
+      feature.priority ===
+      "絶対必要");
 
-私は「${appName}」というWebアプリを作りたいです。
 
-【目的】
-${state.user || "利用者未定"}のために、
-「${state.problem || "解決したい問題はまだ未定"}」
-という課題を解決したいです。
+  const optional =
+    features.filter(feature =>
+      feature.priority ===
+      "できれば欲しい");
 
-作りたいものの概要：
-${idea}
 
-【利用場面】
-使う場面：${state.scene || "未定"}
-使う機器：${state.device || "未定"}
+  const featureText = listFeatures(required);
 
-【入力】
-${list(state.input)}
+  const optionalText =
+    listFeatures(optional);
 
-【コンピュータが行う処理】
-${list(state.process)}
 
-【出力】
-${list(state.output)}
+  const completion =
+    getCompletion();
 
-【守りたい条件】
-${list(state.condition)}
+
+  const completionText =
+    completion.length
+      ? completion
+          .map(item => `・${item}`)
+          .join("\n")
+      : "・まだ決めていません";
+
+
+  let conditional =
+    "特に指定していません。";
+
+
+  if (
+    value("conditionIf") &&
+    value("conditionThen")
+  ) {
+
+    conditional =
+      `もし「${value("conditionIf")}」なら、
+「${value("conditionThen")}」ようにしてください。`;
+
+  }
+
+
+  const prompt = `あなたは、Webアプリ開発を支援するAIです。
+
+以下は、中学生が技術科の学習で考えたWebアプリの仕様です。
 
 【重要】
-まだプログラムを作り始めないでください。
 
-まず、この仕様を実現するために、
-不足している情報や曖昧な点がないか確認してください。
+まだWebアプリを実装しないでください。
 
-決める必要があることがあれば、
-中学生にも分かる言葉で、一度に1つずつ質問してください。
+まず、以下の仕様を確認してください。
 
-あなた自身で仕様を勝手に決めず、
-私の回答をもとに仕様を完成させてください。
+内容が不足している場合や、完成形を大きく左右する重要な点が曖昧な場合は、勝手に決めず、中学生にも分かる言葉で質問してください。
 
-仕様が十分に決まったら、
-最終的な仕様を整理して私に確認してください。
+生徒が決めていない機能を、AIの判断だけで追加しないでください。
 
-私が承認した後に、
-Webアプリの作成を始めてください。`;
+仕様確認後、利用者が
+「この仕様で作って」
+と明示的に承認した後にだけ、Webアプリを作成してください。
 
 
-  document.getElementById("prompt").textContent = prompt;
+# 作りたいアプリ
 
+【アプリ名】
+
+${undecided(value("appName"))}
+
+
+【誰のためのアプリか】
+
+${undecided(value("targetUser"))}
+
+
+【解決したいこと】
+
+${undecided(value("problem"))}
+
+
+【どうなってほしいか】
+
+${undecided(value("goal"))}
+
+
+# 利用場面
+
+【使用する場面】
+
+${undecided(value("scene"))}
+
+
+【使用する機器】
+
+${undecided(state.device)}
+
+
+【想定する利用時間】
+
+${undecided(value("useTime"))}
+
+
+【この利用場面にした理由】
+
+${undecided(value("sceneReason"))}
+
+
+# 必要な機能
+
+${featureText}
+
+
+# できれば入れたい機能
+
+${optionalText}
+
+
+# 機能について大切にしたこと
+
+${undecided(value("featureReason"))}
+
+
+# 入力・処理・出力
+
+【入力】
+
+利用者が入力・選択するもの：
+
+${undecided(value("inputData"))}
+
+
+【処理】
+
+入力された情報を使って、
+コンピュータが行うこと：
+
+${undecided(value("process"))}
+
+
+【出力】
+
+利用者に返す情報や動き：
+
+${undecided(value("output"))}
+
+
+【条件による動き】
+
+${conditional}
+
+
+# データと保存
+
+【データを保存する必要】
+
+${undecided(state.saveNeed)}
+
+
+【保存したいデータ】
+
+${undecided(value("savedData"))}
+
+
+【保存方法】
+
+${undecided(state.saveMethod)}
+
+
+【保存したデータの表示方法】
+
+${undecided(value("dataDisplay"))}
+
+
+【データを削除する機能】
+
+${undecided(state.deleteData)}
+
+
+【データのファイル出力】
+
+${undecided(state.exportData)}
+
+
+# 使いやすさ
+
+${undecided(value("usability"))}
+
+
+# その他に守りたい条件
+
+${undecided(value("otherConditions"))}
+
+
+# 完成条件
+
+次の内容を満たしたときに、
+このアプリが完成したと判断します。
+
+${completionText}
+
+
+# 解決したい問題との関係
+
+${undecided(value("evaluation"))}
+
+
+# この設計で最も大切にしたこと
+
+${undecided(value("mostImportant"))}
+
+
+# 教材としての共通条件
+
+以下は、生徒が考えた仕様とは別に、
+この学習で作るWebアプリに共通して適用する条件です。
+
+・個人を特定できる情報は、必要がない限り入力・保存・表示・共有しないでください。
+
+・保存が不要なアプリでは、データを永続保存しないでください。
+
+・保存する場合でも、特に指定がなければサーバーや外部データベースを利用しないでください。
+
+・「同じ端末のブラウザに保存」が指定されている場合は、localStorageなどブラウザ内で完結する方法を使用してください。
+
+・外部APIや第三者サービスとの通信は、特に指定がない限り使用しないでください。
+
+・GIGAスクール端末や一般的なPCで利用できるWebアプリにしてください。
+
+・Chromebook、タブレット、スマートフォンでも画面が大きく崩れないようにしてください。
+
+・タッチ操作とマウス操作の両方で利用できるようにしてください。
+
+・入力欄の文字サイズは16px以上を基本としてください。
+
+・ボタンなどの操作部分は、タッチしやすい大きさにしてください。
+
+・ホバーだけに依存する操作を作らないでください。
+
+・色だけで情報や状態を区別しないでください。
+
+・初めて使う人にも、次に何をすればよいか分かる画面にしてください。
+
+・コードには分かりやすいコメントを付けてください。
+
+・プログラミング初学者でも、後から修正しやすい構造にしてください。
+
+
+# 実装前確認
+
+ここからが重要です。
+
+まだコードを作成しないでください。
+
+まず、あなたが理解した仕様を、
+
+1. アプリの目的
+2. 利用者
+3. 利用場面
+4. 中心となる機能
+5. 各機能の詳しい動き
+6. 入力
+7. 処理
+8. 出力
+9. 条件による動き
+10. 保存するデータ
+11. 保存方法
+12. 使いやすさ
+13. 完成条件
+
+の順に整理して、
+
+「作成前の仕様確認」
+
+として提示してください。
+
+仕様に矛盾がある場合や、
+実装するために決める必要がある重要な情報が不足している場合だけ質問してください。
+
+質問するときは、
+中学生にも分かる言葉を使ってください。
+
+AIが勝手に仕様を決めてはいけません。
+
+最後に必ず、
+
+「この仕様で合っていますか？
+作る場合は『この仕様で作って』と返信してください。
+修正する場合は、変更したいところを教えてください。」
+
+と表示し、そこで応答を終了してください。
+
+利用者が
+「この仕様で作って」
+と承認するまでは実装を開始しないでください。
+
+
+# 実装後
+
+Webアプリを作成した後は、
+完成条件と照らし合わせて主要な操作を確認してください。
+
+できていない項目があれば修正してください。
+
+最後に、
+
+・実装した主な機能
+・完成条件の確認結果
+・保存方法
+・今後改善できそうなこと
+
+を短く説明してください。`;
+
+
+  document
+    .getElementById("prompt")
+    .textContent = prompt;
 }
 
+
+function listFeatures(features) {
+
+  if (!features.length) {
+    return "・まだ決めていません";
+  }
+
+  return features
+    .map(feature => {
+
+      let text =
+        `・${feature.name}`;
+
+      if (feature.detail) {
+        text +=
+          `\n  詳しい動き：${feature.detail}`;
+      }
+
+      return text;
+
+    })
+    .join("\n");
+}
+
+
+/* ==================================================
+ Copy
+================================================== */
 
 async function copyPrompt() {
 
   const text =
-    document.getElementById("prompt").textContent;
+    document
+      .getElementById("prompt")
+      .textContent;
 
-  await navigator.clipboard.writeText(text);
+  try {
 
-  alert("プロンプトをコピーしました");
+    await navigator.clipboard
+      .writeText(text);
 
+    alert(
+      "AI用プロンプトをコピーしました。"
+    );
+
+  } catch {
+
+    alert(
+      "コピーできませんでした。文章を選択してコピーしてください。"
+    );
+
+  }
 }
 
 
-updatePrompt();
+/* ==================================================
+ Update
+================================================== */
+
+function updateAll() {
+  updateSpec();
+  updatePrompt();
+}
+
+
+updateAll();
 
 </script>
 
