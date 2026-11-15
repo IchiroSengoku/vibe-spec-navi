@@ -444,6 +444,38 @@ select:focus {
 }
 
 /* -------------------------
+   Save Toast
+------------------------- */
+
+.save-toast {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.save-toast.saving {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #b9d5ff;
+}
+
+.save-toast.success {
+  background: var(--success-light);
+  color: var(--success);
+  border: 1px solid #a3e0be;
+}
+
+.save-toast.info {
+  background: #f4f7fb;
+  color: var(--sub);
+  border: 1px solid var(--border);
+}
+
+/* -------------------------
    Responsive
 ------------------------- */
 
@@ -1314,6 +1346,8 @@ AI用プロンプト
   id="promptContent"
   class="side-content">
 
+<div id="saveToast" class="save-toast" style="display:none;"></div>
+
 <div
   id="prompt"
   class="prompt"></div>
@@ -1332,6 +1366,14 @@ AI用プロンプト
 
 
 <script>
+
+/* ==================================================
+ Googleスプレッドシート連携設定
+ ※GAS（Google Apps Script）で作成したウェブアプリのURLをここに設定します
+================================================== */
+
+const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyjw5FmjCuY5lpyGgESvutEopzP7z-crc4L3HjdWPVIQo4VyouSukxCfoddQf-VSlYh/exec";
+
 
 /* ==================================================
  選択状態
@@ -1604,8 +1646,135 @@ function showSideTab(tab) {
 }
 
 
+/* ==================================================
+ Googleスプレッドシート保存処理
+================================================== */
+
+// 匿名セッションIDの取得・生成（タブを閉じるまで同一、個人情報は含みません）
+function getSessionId() {
+  let id = sessionStorage.getItem("vibe_spec_session_id");
+  if (!id) {
+    id = "s-" + Math.random().toString(36).substring(2, 8);
+    sessionStorage.setItem("vibe_spec_session_id", id);
+  }
+  return id;
+}
+
+// 送信回数の取得・加算（同じ授業内で何回目の送信かをカウント）
+function incrementSubmissionCount() {
+  let count = parseInt(sessionStorage.getItem("vibe_spec_submit_count") || "0", 10);
+  count += 1;
+  sessionStorage.setItem("vibe_spec_submit_count", count);
+  return count;
+}
+
+// 保存状況メッセージの表示
+function showSaveToast(message, type) {
+  const toast = document.getElementById("saveToast");
+  if (!toast) return;
+  toast.className = "save-toast " + type;
+  toast.textContent = message;
+  toast.style.display = "block";
+  if (type === "success" || type === "info") {
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 4000);
+  }
+}
+
+let isSaving = false;
+let lastSaveTimestamp = 0;
+
+async function saveToSpreadsheet() {
+  // URL未設定時は処理をスキップ（通常の利用を妨げない）
+  if (!GAS_WEBAPP_URL || !GAS_WEBAPP_URL.trim()) {
+    return;
+  }
+
+  // 連打防止（3秒以内の連続クリックはスキップ）
+  const now = Date.now();
+  if (isSaving || (now - lastSaveTimestamp < 3000)) {
+    return;
+  }
+  isSaving = true;
+  lastSaveTimestamp = now;
+
+  const count = incrementSubmissionCount();
+  const sessionId = getSessionId();
+
+  showSaveToast(`スプレッドシートに保存中...（${count}回目）`, "saving");
+
+  const nowStr = new Date().toLocaleString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  const payload = {
+    timestamp: nowStr,
+    sessionId: sessionId,
+    submissionCount: count,
+    appName: value("appName"),
+    targetUser: value("targetUser"),
+    problem: value("problem"),
+    goal: value("goal"),
+    scene: value("scene"),
+    device: state.device || "",
+    useTime: value("useTime"),
+    sceneReason: value("sceneReason"),
+    feature1Name: value("feature1"),
+    feature1Priority: document.getElementById("priority1") ? document.getElementById("priority1").value : "",
+    feature1Detail: value("featureDetail1"),
+    feature2Name: value("feature2"),
+    feature2Priority: document.getElementById("priority2") ? document.getElementById("priority2").value : "",
+    feature2Detail: value("featureDetail2"),
+    feature3Name: value("feature3"),
+    feature3Priority: document.getElementById("priority3") ? document.getElementById("priority3").value : "",
+    feature3Detail: value("featureDetail3"),
+    featureReason: value("featureReason"),
+    saveNeed: state.saveNeed || "",
+    savedData: value("savedData"),
+    saveMethod: state.saveMethod || "",
+    dataDisplay: value("dataDisplay"),
+    deleteData: state.deleteData || "",
+    exportData: state.exportData || "",
+    usability: value("usability"),
+    otherConditions: value("otherConditions"),
+    completion: getCompletion().join(" / "),
+    evaluation: value("evaluation"),
+    mostImportant: value("mostImportant"),
+    prompt: document.getElementById("prompt") ? document.getElementById("prompt").textContent : ""
+  };
+
+  try {
+    // GASへのPOST送信（CORS制約を回避するためno-corsモードで送信）
+    await fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        data: JSON.stringify(payload)
+      })
+    });
+
+    showSaveToast(`✓ スプレッドシートに保存しました（${count}回目）`, "success");
+  } catch (err) {
+    console.error("スプレッドシート保存エラー:", err);
+    showSaveToast("保存中にエラーが発生しました（プロンプトはそのまま利用できます）", "info");
+  } finally {
+    isSaving = false;
+  }
+}
+
+
 function openPromptTab() {
   showSideTab("prompt");
+  saveToSpreadsheet();
 }
 
 
