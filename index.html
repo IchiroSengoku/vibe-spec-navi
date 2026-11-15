@@ -511,12 +511,11 @@ select:focus {
 <nav class="step-nav">
   <button class="step-button active" data-step="1">1 問題</button>
   <button class="step-button" data-step="2">2 場面</button>
-  <button class="step-button" data-step="3">3 機能</button>
-  <button class="step-button" data-step="4">4 しくみ</button>
-  <button class="step-button" data-step="5">5 データ</button>
-  <button class="step-button" data-step="6">6 使いやすさ</button>
-  <button class="step-button" data-step="7">7 完成条件</button>
-  <button class="step-button" data-step="8">8 確認</button>
+  <button class="step-button" data-step="3">3 機能と仕様</button>
+  <button class="step-button" data-step="4">4 データ</button>
+  <button class="step-button" data-step="5">5 使いやすさ</button>
+  <button class="step-button" data-step="6">6 完成条件</button>
+  <button class="step-button" data-step="7">7 確認</button>
 </nav>
 
 
@@ -672,6 +671,7 @@ select:focus {
      data-name="device">
 
 <button class="choice">Chromebook</button>
+<button class="choice">iPad</button>
 <button class="choice">パソコン</button>
 <button class="choice">タブレット</button>
 <button class="choice">スマートフォン</button>
@@ -738,7 +738,7 @@ select:focus {
 <h2>何ができるアプリにする？</h2>
 
 <p class="description">
-まず必要な機能を考え、
+まず必要な機能（やりたいこと）を考え、
 その機能がどのように動くのかまで具体的にしてみよう。
 </p>
 
@@ -764,8 +764,7 @@ select:focus {
 
 <textarea
   id="featureDetail1"
-  placeholder="この機能は、どのように動けばよいですか？
-例：品物を追加できる。個数を入力できる。いらなくなった項目は削除できる。"></textarea>
+  placeholder="仕様：この機能はどのように動けばよいですか？品物を追加できる。いらなくなった項目は削除できる。個数を入力できる。"></textarea>
 
 </div>
 
@@ -892,184 +891,6 @@ select:focus {
 
 <div class="step-number">STEP 4</div>
 
-<h2>どんなしくみで動く？</h2>
-
-<p class="description">
-「入力 → 処理 → 出力」で、
-コンピュータの働きを考えてみよう。
-</p>
-
-
-<div class="ipo-grid">
-
-<div class="ipo-card">
-
-<h3>① 入力</h3>
-
-<p class="field-help">
-利用する人は何を入力したり選んだりしますか？
-</p>
-
-<textarea
-  id="inputData"
-  placeholder="例：品物の名前、個数"></textarea>
-
-<div class="think-box">
-
-<button
-  class="hint-button"
-  onclick="toggleHint('inputHints')">
-ヒント
-</button>
-
-<div class="hints" id="inputHints">
-
-<div class="choices">
-<button class="choice">文字</button>
-<button class="choice">数字</button>
-<button class="choice">ボタン</button>
-<button class="choice">選択肢</button>
-<button class="choice">画像</button>
-<button class="choice">センサ</button>
-</div>
-
-</div>
-</div>
-
-</div>
-
-
-<div class="arrow">→</div>
-
-
-<div class="ipo-card">
-
-<h3>② 処理</h3>
-
-<p class="field-help">
-入力された情報を使って、
-コンピュータは何をしますか？
-</p>
-
-<textarea
-  id="process"
-  placeholder="例：入力された品物を買い物リストに追加する"></textarea>
-
-<div class="think-box">
-
-<button
-  class="hint-button"
-  onclick="toggleHint('processHints')">
-ヒント
-</button>
-
-<div class="hints" id="processHints">
-
-<div class="choices">
-<button class="choice">比べる</button>
-<button class="choice">計算する</button>
-<button class="choice">判定する</button>
-<button class="choice">記録する</button>
-<button class="choice">探す</button>
-<button class="choice">並べ替える</button>
-<button class="choice">数える</button>
-</div>
-
-</div>
-</div>
-
-</div>
-
-
-<div class="arrow">→</div>
-
-
-<div class="ipo-card">
-
-<h3>③ 出力</h3>
-
-<p class="field-help">
-結果として何を表示したり、動かしたりしますか？
-</p>
-
-<textarea
-  id="output"
-  placeholder="例：買い物リストを一覧で表示する"></textarea>
-
-<div class="think-box">
-
-<button
-  class="hint-button"
-  onclick="toggleHint('outputHints')">
-ヒント
-</button>
-
-<div class="hints" id="outputHints">
-
-<div class="choices">
-<button class="choice">文字</button>
-<button class="choice">一覧</button>
-<button class="choice">画像</button>
-<button class="choice">グラフ</button>
-<button class="choice">音</button>
-<button class="choice">LED</button>
-<button class="choice">モーター</button>
-</div>
-
-</div>
-</div>
-
-</div>
-
-</div>
-
-
-<div class="field" style="margin-top:30px;">
-
-<label class="field-title">
-「もし○○なら」のように、動きを変える必要がありますか？
-</label>
-
-<input
-  id="conditionIf"
-  type="text"
-  placeholder="もし：例　在庫が0個だったら">
-
-<input
-  id="conditionThen"
-  type="text"
-  style="margin-top:8px;"
-  placeholder="そのとき：例　買い物リストに表示する">
-
-</div>
-
-
-<div class="nav-actions">
-
-<button class="btn btn-secondary"
-        onclick="showStep(3)">
-← 戻る
-</button>
-
-<button class="btn btn-primary"
-        onclick="showStep(5)">
-次へ →
-</button>
-
-</div>
-
-</section>
-
-
-
-<!-- ==================================================
- STEP 5
-================================================== -->
-
-<section class="step" id="step5">
-
-<div class="step-number">STEP 5</div>
-
 <h2>データをどうする？</h2>
 
 <p class="description">
@@ -1184,12 +1005,12 @@ select:focus {
 <div class="nav-actions">
 
 <button class="btn btn-secondary"
-        onclick="showStep(4)">
+        onclick="showStep(3)">
 ← 戻る
 </button>
 
 <button class="btn btn-primary"
-        onclick="showStep(6)">
+        onclick="showStep(5)">
 次へ →
 </button>
 
@@ -1200,12 +1021,12 @@ select:focus {
 
 
 <!-- ==================================================
- STEP 6
+ STEP 5
 ================================================== -->
 
-<section class="step" id="step6">
+<section class="step" id="step5">
 
-<div class="step-number">STEP 6</div>
+<div class="step-number">STEP 5</div>
 
 <h2>使いやすさを考えよう</h2>
 
@@ -1272,7 +1093,7 @@ select:focus {
 <ul>
 <li>個人情報を必要以上に扱わない</li>
 <li>Chromebookや一般的なPCで利用できる</li>
-<li>タブレットでも操作できる</li>
+<li>iPadでも操作できる</li>
 <li>スマートフォンでも確認できる</li>
 <li>文字を読みやすくする</li>
 <li>ボタンを押しやすくする</li>
@@ -1289,12 +1110,12 @@ select:focus {
 <div class="nav-actions">
 
 <button class="btn btn-secondary"
-        onclick="showStep(5)">
+        onclick="showStep(4)">
 ← 戻る
 </button>
 
 <button class="btn btn-primary"
-        onclick="showStep(7)">
+        onclick="showStep(6)">
 次へ →
 </button>
 
@@ -1305,12 +1126,12 @@ select:focus {
 
 
 <!-- ==================================================
- STEP 7
+ STEP 6
 ================================================== -->
 
-<section class="step" id="step7">
+<section class="step" id="step6">
 
-<div class="step-number">STEP 7</div>
+<div class="step-number">STEP 6</div>
 
 <h2>何ができたら完成？</h2>
 
@@ -1374,12 +1195,12 @@ select:focus {
 <div class="nav-actions">
 
 <button class="btn btn-secondary"
-        onclick="showStep(6)">
+        onclick="showStep(5)">
 ← 戻る
 </button>
 
 <button class="btn btn-primary"
-        onclick="showStep(8)">
+        onclick="showStep(7)">
 仕様を確認する →
 </button>
 
@@ -1390,12 +1211,12 @@ select:focus {
 
 
 <!-- ==================================================
- STEP 8
+ STEP 7
 ================================================== -->
 
-<section class="step" id="step8">
+<section class="step" id="step7">
 
-<div class="step-number">STEP 8</div>
+<div class="step-number">STEP 7</div>
 
 <h2>自分が考えた仕様を確認しよう</h2>
 
@@ -1414,7 +1235,6 @@ select:focus {
 <li>何を良くしたいのか分かる</li>
 <li>必要な機能が分かる</li>
 <li>それぞれの機能の動きが分かる</li>
-<li>入力・処理・出力が分かる</li>
 <li>保存するデータが分かる</li>
 <li>完成したかどうか確かめられる</li>
 </ul>
@@ -1438,7 +1258,7 @@ select:focus {
 <div class="nav-actions">
 
 <button class="btn btn-secondary"
-        onclick="showStep(7)">
+        onclick="showStep(6)">
 ← 戻って直す
 </button>
 
@@ -1531,7 +1351,8 @@ const state = {
 ================================================== */
 
 function value(id) {
-  return document.getElementById(id).value.trim();
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
 }
 
 
@@ -1865,17 +1686,6 @@ function updateSpec() {
   }
 
 
-  const condition =
-
-    value("conditionIf") &&
-    value("conditionThen")
-
-    ? `もし「${escapeHTML(value("conditionIf"))}」なら、
-       「${escapeHTML(value("conditionThen"))}」`
-
-    : "";
-
-
   const html =
 
     specBlock(
@@ -1935,34 +1745,6 @@ function updateSpec() {
       ${featuresHTML}
     </div>
     `
-
-    +
-
-    specBlock(
-      "入力",
-      previewText(value("inputData"))
-    )
-
-    +
-
-    specBlock(
-      "処理",
-      previewText(value("process"))
-    )
-
-    +
-
-    specBlock(
-      "出力",
-      previewText(value("output"))
-    )
-
-    +
-
-    specBlock(
-      "条件による動き",
-      previewText(condition)
-    )
 
     +
 
@@ -2081,22 +1863,6 @@ function updatePrompt() {
       : "・まだ決めていません";
 
 
-  let conditional =
-    "特に指定していません。";
-
-
-  if (
-    value("conditionIf") &&
-    value("conditionThen")
-  ) {
-
-    conditional =
-      `もし「${value("conditionIf")}」なら、
-「${value("conditionThen")}」ようにしてください。`;
-
-  }
-
-
   const prompt = `あなたは、Webアプリ開発を支援するAIです。
 
 以下は、中学生が技術科の学習で考えたWebアプリの仕様です。
@@ -2173,35 +1939,6 @@ ${optionalText}
 # 機能について大切にしたこと
 
 ${undecided(value("featureReason"))}
-
-
-# 入力・処理・出力
-
-【入力】
-
-利用者が入力・選択するもの：
-
-${undecided(value("inputData"))}
-
-
-【処理】
-
-入力された情報を使って、
-コンピュータが行うこと：
-
-${undecided(value("process"))}
-
-
-【出力】
-
-利用者に返す情報や動き：
-
-${undecided(value("output"))}
-
-
-【条件による動き】
-
-${conditional}
 
 
 # データと保存
