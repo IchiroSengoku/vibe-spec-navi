@@ -1,22 +1,42 @@
 /**
  * Vibeコーディング 仕様づくりナビ - スプレッドシート記録スクリプト
- * 
- * 【設定手順】
- * 1. 記録先とするGoogleスプレッドシートを開きます。
- * 2. 画面上のメニュー「拡張機能」>「Apps Script」をクリックします。
- * 3. 表示されたエディタの内容をすべて消し、このコードをそのまま貼り付けます。
- * 4. 保存アイコン（または Ctrl+S / Cmd+S）を押して保存します。
- * 5. 画面右上の「デプロイ」青色ボタン >「新しいデプロイ」をクリックします。
- *    ※すでにデプロイ済みの場合は「デプロイを管理」>「鉛筆マーク（編集）」>「バージョン: 新バージョン」にしてデプロイ
- * 6. 歯車アイコン（種類の選択）をクリックし、「ウェブアプリ」を選択します。
- * 7. 次のように設定します：
- *    - 説明: 仕様ナビ記録
- *    - 次のユーザーとして実行: 自分（あなたのGoogleアカウント）
- *    - アクセスできるユーザー: 全員 (※スプレッドシート自体の共有設定は非公開のままでOKです)
- * 8. 「デプロイ」ボタンをクリックします。
- * 9. 発行された「ウェブアプリのURL」をコピーします。
  */
 
+/**
+ * 接続確認用（ブラウザのアドレスバーにWebアプリURLを直接貼り付けて開いたときに動作します）
+ */
+function doGet(e) {
+  return ContentService.createTextOutput("OK: Vibe仕様づくりナビ連携APIは正常に稼働しています。")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+/**
+ * 動作テスト用
+ * Apps Script エディタの上部で「testSave」を選択し、「実行」をクリックするとテスト行が追加されます。
+ * ※初回のみ「承認が必要です」という画面が出るので、画面の案内に従ってアクセスを許可してください。
+ */
+function testSave() {
+  var dummyEvent = {
+    postData: {
+      contents: JSON.stringify({
+        timestamp: Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss"),
+        sessionId: "test-001",
+        submissionCount: 1,
+        appName: "テスト用アプリ（動作確認）",
+        targetUser: "テスト利用者",
+        problem: "テストの困りごと",
+        goal: "テストの解決目標",
+        prompt: "これは動作テスト用のプロンプトです。"
+      })
+    }
+  };
+  var result = doPost(dummyEvent);
+  Logger.log("テスト実行結果: " + result.getContent());
+}
+
+/**
+ * 本番データ受信処理
+ */
 function doPost(e) {
   var lock = LockService.getScriptLock();
   // 30秒間ロックを試みる（多人数が一斉に送信した場合のデータ競合対策）
@@ -26,7 +46,7 @@ function doPost(e) {
   }
 
   try {
-    var raw = e.postData ? e.postData.contents : "";
+    var raw = e && e.postData ? e.postData.contents : "";
     var data = {};
 
     if (raw) {
@@ -40,15 +60,16 @@ function doPost(e) {
           data = JSON.parse(e.parameter.data);
         }
       }
-    } else if (e.parameter && e.parameter.data) {
+    } else if (e && e.parameter && e.parameter.data) {
       data = JSON.parse(e.parameter.data);
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     if (!ss) {
-      throw new Error("スプレッドシートが見つかりません。必ずスプレッドシートのメニュー「拡張機能」>「Apps Script」から作成してください。");
+      throw new Error("スプレッドシートが見つかりません。必ずスプレッドシートのメニュー「拡張機能」>「Apps Script」から開いてください。");
     }
-    var sheet = ss.getActiveSheet();
+    // 常に1番目のシート（左端のタブ）に書き込みます
+    var sheet = ss.getSheets()[0];
 
     // シートが空（新規作成時）の場合は1行目にヘッダーを自動生成
     if (sheet.getLastRow() === 0) {
