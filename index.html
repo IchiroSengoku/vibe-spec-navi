@@ -475,6 +475,32 @@ select:focus {
   border: 1px solid var(--border);
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-reset {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--sub);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-reset:hover {
+  background: #fff0f0;
+  color: #c92a2a;
+  border-color: #ffa8a8;
+}
+
 /* -------------------------
    Responsive
 ------------------------- */
@@ -528,11 +554,18 @@ select:focus {
 
 <header>
   <div class="header-inner">
-    <h1>Vibeコーディング 仕様づくりナビ</h1>
-    <p>
-      「誰の、何を、どうしたい？」から、
-      アプリの設計を考えてAIに伝えよう。
-    </p>
+    <div class="header-content">
+      <div>
+        <h1>Vibeコーディング 仕様づくりナビ</h1>
+        <p>
+          「誰の、何を、どうしたい？」から、
+          アプリの設計を考えてAIに伝えよう。
+        </p>
+      </div>
+      <button class="btn-reset" onclick="resetAllData()" title="入力した内容をすべてクリアして最初からやり直します">
+        最初からやり直す
+      </button>
+    </div>
   </div>
 </header>
 
@@ -1438,6 +1471,8 @@ function toggleHint(id) {
 
 function showStep(number) {
 
+  currentStep = parseInt(number, 10) || 1;
+
   document.querySelectorAll(".step")
     .forEach(step =>
       step.classList.remove("active"));
@@ -1462,6 +1497,8 @@ function showStep(number) {
     top: 0,
     behavior: "smooth"
   });
+
+  saveToLocalStorage();
 }
 
 
@@ -2331,15 +2368,143 @@ async function copyPrompt() {
 
 
 /* ==================================================
+ ローカルストレージ自動保存（キャッシュ機能）
+================================================== */
+
+const STORAGE_KEY = "vibe_spec_draft_data";
+let currentStep = 1;
+
+const INPUT_IDS = [
+  "appName", "targetUser", "problem", "goal",
+  "scene", "useTime", "sceneReason",
+  "feature1", "priority1", "featureDetail1",
+  "feature2", "priority2", "featureDetail2",
+  "feature3", "priority3", "featureDetail3",
+  "featureReason",
+  "savedData", "dataDisplay",
+  "usability", "otherConditions",
+  "evaluation", "mostImportant"
+];
+
+function saveToLocalStorage() {
+  try {
+    const data = {
+      values: {},
+      completions: [],
+      state: { ...state },
+      currentStep: currentStep,
+      sessionId: sessionStorage.getItem("vibe_spec_session_id") || "",
+      submissionCount: parseInt(sessionStorage.getItem("vibe_spec_submit_count") || "0", 10),
+      savedAt: new Date().toISOString()
+    };
+
+    INPUT_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        data.values[id] = el.value;
+      }
+    });
+
+    document.querySelectorAll(".completion").forEach(input => {
+      data.completions.push(input.value);
+    });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn("ローカルストレージへの保存に失敗しました:", e);
+  }
+}
+
+function restoreFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+    if (!data) return;
+
+    // 各入力欄の値を復元
+    if (data.values) {
+      INPUT_IDS.forEach(id => {
+        if (data.values[id] !== undefined) {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = data.values[id];
+          }
+        }
+      });
+    }
+
+    // 完成条件リストの復元
+    if (Array.isArray(data.completions)) {
+      const inputs = document.querySelectorAll(".completion");
+      data.completions.forEach((val, idx) => {
+        if (inputs[idx]) {
+          inputs[idx].value = val;
+        }
+      });
+    }
+
+    // 選択肢ボタンの復元
+    if (data.state) {
+      Object.assign(state, data.state);
+
+      document.querySelectorAll(".single-choice").forEach(group => {
+        const name = group.dataset.name;
+        const selectedVal = state[name];
+        if (selectedVal) {
+          group.querySelectorAll(".choice").forEach(btn => {
+            if (btn.textContent.trim() === selectedVal) {
+              btn.classList.add("selected");
+            } else {
+              btn.classList.remove("selected");
+            }
+          });
+        }
+      });
+    }
+
+    // セッションID・送信回数の復元（ブラウザを再度開いても同一生徒として識別可能に）
+    if (data.sessionId) {
+      sessionStorage.setItem("vibe_spec_session_id", data.sessionId);
+    }
+    if (data.submissionCount) {
+      sessionStorage.setItem("vibe_spec_submit_count", data.submissionCount);
+    }
+
+    // 直前に開いていたステップへ移動
+    if (data.currentStep && data.currentStep >= 1 && data.currentStep <= 7) {
+      currentStep = data.currentStep;
+      showStep(data.currentStep);
+    }
+  } catch (e) {
+    console.warn("ローカルストレージからの復元に失敗しました:", e);
+  }
+}
+
+function resetAllData() {
+  if (!confirm("入力した内容をすべて消去して、最初からやり直しますか？\n（ブラウザに保存された下書きもクリアされます）")) {
+    return;
+  }
+  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem("vibe_spec_session_id");
+  sessionStorage.removeItem("vibe_spec_submit_count");
+  location.reload();
+}
+
+
+/* ==================================================
  Update
 ================================================== */
 
 function updateAll() {
   updateSpec();
   updatePrompt();
+  saveToLocalStorage();
 }
 
 
+restoreFromLocalStorage();
 updateAll();
 
 </script>
