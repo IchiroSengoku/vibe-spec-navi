@@ -7,14 +7,14 @@
  * 3. 表示されたエディタの内容をすべて消し、このコードをそのまま貼り付けます。
  * 4. 保存アイコン（または Ctrl+S / Cmd+S）を押して保存します。
  * 5. 画面右上の「デプロイ」青色ボタン >「新しいデプロイ」をクリックします。
+ *    ※すでにデプロイ済みの場合は「デプロイを管理」>「鉛筆マーク（編集）」>「バージョン: 新バージョン」にしてデプロイ
  * 6. 歯車アイコン（種類の選択）をクリックし、「ウェブアプリ」を選択します。
  * 7. 次のように設定します：
  *    - 説明: 仕様ナビ記録
  *    - 次のユーザーとして実行: 自分（あなたのGoogleアカウント）
- *    - アクセスできるユーザー: 全員 (※重要：生徒がGoogleログイン不要で送信できるようにするため)
- * 8. 「デプロイ」ボタンをクリックします。（初回はアクセスの承認画面が出るので許可してください）
- * 9. 発行された「ウェブアプリのURL」（https://script.google.com/macros/s/.../exec）をコピーします。
- * 10. index.html 内の GAS_WEBAPP_URL = "ここにURL"; に貼り付ければ連携完了です！
+ *    - アクセスできるユーザー: 全員 (※スプレッドシート自体の共有設定は非公開のままでOKです)
+ * 8. 「デプロイ」ボタンをクリックします。
+ * 9. 発行された「ウェブアプリのURL」をコピーします。
  */
 
 function doPost(e) {
@@ -29,13 +29,25 @@ function doPost(e) {
     var raw = e.postData ? e.postData.contents : "";
     var data = {};
 
-    if (e.parameter && e.parameter.data) {
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (jsonErr) {
+        // URLエンコードされている場合のフォールバック (data=%7B...%7D)
+        if (raw.indexOf("data=") === 0) {
+          data = JSON.parse(decodeURIComponent(raw.substring(5).replace(/\+/g, " ")));
+        } else if (e.parameter && e.parameter.data) {
+          data = JSON.parse(e.parameter.data);
+        }
+      }
+    } else if (e.parameter && e.parameter.data) {
       data = JSON.parse(e.parameter.data);
-    } else if (raw) {
-      data = JSON.parse(raw);
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) {
+      throw new Error("スプレッドシートが見つかりません。必ずスプレッドシートのメニュー「拡張機能」>「Apps Script」から作成してください。");
+    }
     var sheet = ss.getActiveSheet();
 
     // シートが空（新規作成時）の場合は1行目にヘッダーを自動生成
@@ -126,6 +138,7 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
+    console.error("エラー詳細: " + err.toString());
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
