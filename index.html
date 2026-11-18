@@ -130,6 +130,36 @@ header p {
   color: white;
 }
 
+.nav-copy-btn {
+  min-height: 48px;
+  border: 1px dashed #cfd7e3;
+  border-radius: 10px;
+  background: #f4f6fa;
+  color: #9aa5b6;
+  font-weight: 700;
+  cursor: not-allowed;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.nav-copy-btn:not(:disabled) {
+  background: var(--success);
+  border: 1px solid var(--success);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(23, 116, 71, 0.25);
+}
+
+.nav-copy-btn:not(:disabled):hover {
+  background: #13603b;
+  border-color: #13603b;
+}
+
 .step {
   display: none;
 }
@@ -581,6 +611,7 @@ select:focus {
   <button class="step-button" data-step="5">5 使いやすさ</button>
   <button class="step-button" data-step="6">6 完成条件</button>
   <button class="step-button" data-step="7">7 確認</button>
+  <button id="navCopyBtn" class="nav-copy-btn" disabled onclick="copyPrompt()" title="STEP 7 の「AI用プロンプトを見る」を押すとコピーできるようになります">プロンプトをコピー</button>
 </nav>
 
 
@@ -1807,9 +1838,31 @@ async function saveToSpreadsheet() {
 }
 
 
+let isPromptActivated = false;
+
+function activateNavCopyButton() {
+  isPromptActivated = true;
+  const btn = document.getElementById("navCopyBtn");
+  if (btn) {
+    btn.disabled = false;
+    btn.title = "AI用プロンプトをクリップボードにコピー";
+  }
+}
+
+function deactivateNavCopyButton() {
+  isPromptActivated = false;
+  const btn = document.getElementById("navCopyBtn");
+  if (btn) {
+    btn.disabled = true;
+    btn.title = "STEP 7 の「AI用プロンプトを見る」を押すとコピーできるようになります";
+  }
+}
+
 function openPromptTab() {
   showSideTab("prompt");
   saveToSpreadsheet();
+  activateNavCopyButton();
+  saveToLocalStorage();
 }
 
 
@@ -2393,6 +2446,7 @@ function saveToLocalStorage() {
       completions: [],
       state: { ...state },
       currentStep: currentStep,
+      isPromptActivated: isPromptActivated,
       sessionId: sessionStorage.getItem("vibe_spec_session_id") || "",
       submissionCount: parseInt(sessionStorage.getItem("vibe_spec_submit_count") || "0", 10),
       savedAt: new Date().toISOString()
@@ -2464,6 +2518,13 @@ function restoreFromLocalStorage() {
       });
     }
 
+    // プロンプトコピーボタンのアクティブ状態の復元
+    if (data.isPromptActivated) {
+      activateNavCopyButton();
+    } else {
+      deactivateNavCopyButton();
+    }
+
     // セッションID・送信回数の復元（ブラウザを再度開いても同一生徒として識別可能に）
     if (data.sessionId) {
       sessionStorage.setItem("vibe_spec_session_id", data.sessionId);
@@ -2486,6 +2547,7 @@ function resetAllData() {
   if (!confirm("入力した内容をすべて消去して、最初からやり直しますか？\n（ブラウザに保存された下書きもクリアされます）")) {
     return;
   }
+  deactivateNavCopyButton();
   localStorage.removeItem(STORAGE_KEY);
   sessionStorage.removeItem("vibe_spec_session_id");
   sessionStorage.removeItem("vibe_spec_submit_count");
